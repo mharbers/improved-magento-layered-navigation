@@ -34,4 +34,68 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getHtml() {
+        $spec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
+        if( $spec && $spec->isSatisfiedBy( $this ) ) {
+            $this->setTemplate('catalin_seo/catalog/layer/filter_energylabel.phtml');
+        }
+
+        return parent::getHtml();
+    }
+
+    public function getClearUrl() {
+
+        if ($this->helper('catalin_seo')->isCatalogSearch()) {
+            $filterState = array('isLayerAjax' => null);
+            foreach ($this->getActiveFilters() as $item) {
+                $filterState[$item->getFilter()->getRequestVar()] = $item->getFilter()->getCleanValue();
+            }
+            $params['_current'] = true;
+            $params['_use_rewrite'] = true;
+            $params['_query'] = $filterState;
+            $params['_escape'] = true;
+            return Mage::getUrl('*/*/*', $params);
+        }
+
+        return $this->helper('catalin_seo')->getClearFiltersUrl();
+    }
+
+    /**
+     * @return array
+     */
+    public function getItems() {
+        $spec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
+        if( $spec && $spec->isSatisfiedBy( $this ) ) {
+            $sorted = array();
+            foreach (parent::getItems() as $_item)
+            {
+                $sorted[sprintf( "%'A5s", $_item->getLabel() )]    = $_item;
+            }
+            ksort( $sorted );
+            foreach( $sorted as $_item )
+            {
+                $sorted[$_item->getLabel()] = $_item;
+            }
+            return $sorted;
+        }
+
+        return parent::getItems();
+    }
+
+    /**
+     * @return array
+     */
+    public function getEnergylabelRange() {
+        foreach( $this->getItems() as $item ) {
+            if( in_array( $item->getLabel(), array( 'A+++', 'A++', 'A+' ) ) ) {
+                return array( 'A+++', 'A++', 'A+', 'A', 'B', 'C', 'D' );
+            }
+        }
+
+        return array( 'A', 'B', 'C', 'D', 'E', 'F' );
+    }
+
 }
