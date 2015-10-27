@@ -38,10 +38,7 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
      * @return string
      */
     public function getHtml() {
-        $spec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
-        if( $spec && $spec->isSatisfiedBy( $this ) ) {
-            $this->setTemplate('catalin_seo/catalog/layer/filter_energylabel.phtml');
-        }
+        $this->_setFilterTemplate( $this );
 
         return parent::getHtml();
     }
@@ -96,6 +93,20 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
         }
 
         return array( 'A', 'B', 'C', 'D', 'E', 'F' );
+    }
+
+    protected function _setFilterTemplate( Mage_Catalog_Block_Layer_Filter_Attribute $attribute )
+    {
+        $energySpec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
+        if( $energySpec && $energySpec->isSatisfiedBy( $attribute ) ) {
+            $this->setTemplate('catalin_seo/catalog/layer/filter_energylabel.phtml');
+        }/* else {
+            $etdSpec    = Mage::getModel( 'catalin_seo/specification_etd' );
+            if( $etdSpec && $etdSpec->isSatisfiedBy( $attribute ) ) {
+                $this->setTemplate( 'catalin_seo/catalog/layer/filter_etd.phtml' );
+            }
+        }
+        */
     }
 
 }
