@@ -1,5 +1,16 @@
 <ol>
     <?php foreach ($this->getItems() as $_item): ?>
+        <?php
+        $stockKey       = 'stock-2';
+        switch( strtolower( $_item->getLabel() ) ) {
+            case 'direct leverbaar':
+                $stockKey   = 'stock-0';
+                break;
+            case 'snel leverbaar':
+                $stockKey   = 'stock-1';
+                break;
+        }
+        ?>
         <li>
             <?php if ($_item->getCount() > 0): ?>
                 <a href="<?php echo ($_item->isSelected()) ? $_item->getRemoveUrl() : $_item->getUrl() ?>">

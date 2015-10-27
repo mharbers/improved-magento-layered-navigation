@@ -100,13 +100,12 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
         $energySpec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
         if( $energySpec && $energySpec->isSatisfiedBy( $attribute ) ) {
             $this->setTemplate('catalin_seo/catalog/layer/filter_energylabel.phtml');
-        }/* else {
+        } else {
             $etdSpec    = Mage::getModel( 'catalin_seo/specification_etd' );
             if( $etdSpec && $etdSpec->isSatisfiedBy( $attribute ) ) {
                 $this->setTemplate( 'catalin_seo/catalog/layer/filter_etd.phtml' );
             }
         }
-        */
     }
 
 }
