@@ -1,15 +1,6 @@
 {
-    "name": "caciobanu/improved-magento-layered-navigation",
+    "name": "mhobbink/improved-magento-layered-navigation",
     "type": "magento-module",
     "license": "OSL-3.0",
-    "description": "Improved Magento layered navigation extension",
-    "suggest": {
-        "magento-hackathon/magento-composer-installer": "*"
-    },
-    "authors":[
-        {
-            "name": "Catalin Ciobanu",
-            "email": "caciobanu@gmail.com"
-        }
-    ]
+    "description": "Improved Magento layered navigation extension"
 }
