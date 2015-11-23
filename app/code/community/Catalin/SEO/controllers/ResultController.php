@@ -69,6 +69,7 @@ class Catalin_Seo_ResultController extends Mage_CatalogSearch_ResultController
                 if(Mage::getEdition() == Mage::EDITION_ENTERPRISE){
                     $block = $this->getLayout()->getBlock('enterprisesearch.leftnav');
                 } else {
+                    Mage::log( (string) implode( ', ', array_keys( Mage::app()->getLayout()->getAllBlocks() ) ), Zend_Log::ALERT, 'blocks.log' );
                     $block = $this->getLayout()->getBlock('catalogsearch.leftnav');
                 }
                 $layer = $block->toHtml();
