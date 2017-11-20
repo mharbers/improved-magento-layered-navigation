@@ -8,6 +8,8 @@ app/design/frontend/base/default/template/catalin_seo
 # etc
 app/etc/modules/Catalin_SEO.xml
 
+app/locale/nl_NL/Catalin_SEO.csv
+
 # skin
 skin/frontend/base/default/css/catalin_seo
 skin/frontend/base/default/images/catalin_seo

@@ -67,7 +67,8 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
         $spec   = Mage::getModel( 'catalin_seo/specification_energylabel' );
         if( $spec && $spec->isSatisfiedBy( $this ) ) {
             $sorted = array();
-            foreach (parent::getItems() as $_item)
+            $items = parent::getItems();
+            foreach ($items as $_item)
             {
                 $sorted[sprintf( "%'A5s", $_item->getLabel() )]    = $_item;
             }
@@ -80,6 +81,29 @@ class Catalin_SEO_Block_Catalog_Layer_Filter_Attribute extends Mage_Catalog_Bloc
         }
 
         return parent::getItems();
+    }
+
+    public function getSelectedFirstItems()
+    {
+        $items = $this->getItems();
+        $selected = [];
+        $notSelected = [];
+
+        foreach ($items as $item) {
+            if ($item->isSelected()) {
+                $selected[$item->getLabel()] = $item;
+                continue;
+            }
+            $notSelected[$item->getLabel()] = $item;
+        }
+
+        ksort($selected);
+        ksort($notSelected);
+
+        return array_merge(
+            $selected,
+            $notSelected
+        );
     }
 
     /**

@@ -122,6 +122,15 @@
                 </catalin_seo>
             </updates>
         </layout>
+        <translate>
+            <modules>
+                <catalin_seo>
+                    <files>
+                        <default>Catalin_SEO.csv</default>
+                    </files>
+                </catalin_seo>
+            </modules>
+        </translate>
     </frontend>
     <default>
         <catalin_seo>
