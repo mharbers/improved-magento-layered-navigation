@@ -5,14 +5,14 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
+ * This source file is subject to the MIT License (MIT)
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/MIT
  *
  * @package     Catalin_Seo
- * @copyright   Copyright (c) 2015 Catalin Ciobanu
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright   Copyright (c) 2016 Catalin Ciobanu
+ * @license     https://opensource.org/licenses/MIT  MIT License (MIT)
  */
 class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
 {
@@ -21,6 +21,7 @@ class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
      */
 
     const MULTIPLE_FILTERS_DELIMITER = ',';
+    const REL_NOFOLLOW = 'rel="nofollow"';
 
     /**
      * Check if module is enabled or not
@@ -69,6 +70,19 @@ class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
             return false;
         }
         return Mage::getStoreConfigFlag('catalin_seo/catalog/price_slider');
+    }
+
+    /**
+     * Check if category links are enabled instead of the filter
+     *
+     * @return boolean
+     */
+    public function isCategoryLinksEnabled()
+    {
+        if (!$this->isEnabled()) {
+            return false;
+        }
+        return Mage::getStoreConfigFlag('catalin_seo/catalog/category_links');
     }
 
     /**
@@ -133,16 +147,22 @@ class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
         $params = array(
             '_current' => true,
             '_use_rewrite' => true,
-            '_query' => $query,
-            '_escape' => true,
+            '_query' => $query
         );
 
         $url = Mage::getUrl('*/*/*', $params);
         $urlPath = '';
 
+        if (isset($filters['cat']) && $this->isCategoryLinksEnabled()) {
+            $url = $filters['cat'];
+        }
+
         if (!$noFilters) {
             // Add filters
             $layerParams = $this->getCurrentLayerParams($filters);
+            if (isset($layerParams['cat']) && $this->isCategoryLinksEnabled()) {
+                unset($layerParams['cat']);
+            }
             foreach ($layerParams as $key => $value) {
                 // Encode and replace escaped delimiter with the delimiter itself
                 $value = str_replace(urlencode(self::MULTIPLE_FILTERS_DELIMITER), self::MULTIPLE_FILTERS_DELIMITER, urlencode($value));
@@ -177,7 +197,7 @@ class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
      * Checks for Enterprise and if it is, checks for the dot
      * before returning
      * @param  string $suffix
-     * @param  srting $urlParts
+     * @param  string $urlParts
      * @return string
      */
     public function getUrlBody($suffix, $urlParts) {
@@ -503,4 +523,44 @@ class Catalin_SEO_Helper_Data extends Mage_Core_Helper_Data
         return "js/catalin_seo/handler.js";
     }
 
+    public function getNofollow()
+    {
+        if(Mage::getStoreConfigFlag('catalin_seo/catalog/nofollow')){
+            return self::REL_NOFOLLOW;
+        }
+    }
+
+    public function getShowMore()
+    {
+        return Mage::getStoreConfig('catalin_seo/catalog/show_more_link');
+    }
+
+    public function getSearchFilter()
+    {
+        $searchFilter = Mage::getStoreConfig('catalin_seo/catalog/search_filter');
+        if($searchFilter && $this->getShowMore()) {
+            return true;
+        } elseif($searchFilter && !$this->getShowMore()) {
+            return null;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAjaxRequest()
+    {
+        $request = Mage::app()->getRequest();
+
+        if (Mage::getEdition() == Mage::EDITION_ENTERPRISE) {
+            // On Enterprise, FPC caches headers based on request-path (sans query string.)
+            // This means, request-headers or query string values cannot affect the Content-Type.
+            // Otherwise, an attacker can cause cached category pages to be served as application/json.
+            return strpos($request->getRequestString(), '/isLayerAjax/1') !== false;
+        }
+
+        return $request->isAjax();
+    }
 }

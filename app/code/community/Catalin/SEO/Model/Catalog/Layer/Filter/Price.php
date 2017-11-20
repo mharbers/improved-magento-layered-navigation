@@ -5,14 +5,14 @@
  *
  * NOTICE OF LICENSE
  *
- * This source file is subject to the Open Software License (OSL 3.0)
+ * This source file is subject to the MIT License (MIT)
  * that is bundled with this package in the file LICENSE.txt.
  * It is also available through the world-wide-web at this URL:
- * http://opensource.org/licenses/osl-3.0.php
+ * https://opensource.org/licenses/MIT
  *
  * @package     Catalin_Seo
- * @copyright   Copyright (c) 2015 Catalin Ciobanu
- * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+ * @copyright   Copyright (c) 2016 Catalin Ciobanu
+ * @license     https://opensource.org/licenses/MIT  MIT License (MIT)
  */
 class Catalin_SEO_Model_Catalog_Layer_Filter_Price extends Mage_Catalog_Model_Layer_Filter_Price
 {
@@ -46,6 +46,26 @@ class Catalin_SEO_Model_Catalog_Layer_Filter_Price extends Mage_Catalog_Model_La
     }
 
     /**
+     * Prepare text of range label
+     *
+     * @param float|string $fromPrice
+     * @param float|string $toPrice
+     * @return string
+     */
+    protected function _renderRangeLabel($fromPrice, $toPrice)
+    {
+        $store      = Mage::app()->getStore();
+        $formattedFromPrice  = $store->formatPrice($fromPrice);
+        if ($toPrice === '') {
+            return Mage::helper('catalog')->__('%s and above', $formattedFromPrice);
+        } elseif ($fromPrice == $toPrice && Mage::app()->getStore()->getConfig(self::XML_PATH_ONE_PRICE_INTERVAL)) {
+            return $formattedFromPrice;
+        } else {
+            return Mage::helper('catalog')->__('%s - %s', $formattedFromPrice, $store->formatPrice($toPrice));
+        }
+    }
+
+    /**
      * Collect useful information - max and min price
      *
      * @return Catalin_SEO_Model_Catalog_Layer_Filter_Price
@@ -67,7 +87,7 @@ class Catalin_SEO_Model_Catalog_Layer_Filter_Price extends Mage_Catalog_Model_La
         $select->setPart(Zend_Db_Select::WHERE, $conditionsNoPrice);
 
         $this->setData('min_price_float', floor($collection->getMinPrice()));
-        $this->setData('max_price_float', round($collection->getMaxPrice()));
+        $this->setData('max_price_float', ceil($collection->getMaxPrice()));
 
         // Restore all sql conditions
         $select->setPart(Zend_Db_Select::WHERE, $conditions);

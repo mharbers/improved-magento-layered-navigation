@@ -14,18 +14,22 @@
  * @copyright   Copyright (c) 2016 Catalin Ciobanu
  * @license     https://opensource.org/licenses/MIT  MIT License (MIT)
  */
-class Catalin_SEO_Model_CatalogSearch_Layer_Filter_Attribute extends Catalin_SEO_Model_Catalog_Layer_Filter_Attribute
+class Catalin_SEO_Block_Catalog_Layer_Filter_Category extends Mage_Catalog_Block_Layer_Filter_Category
 {
 
     /**
-     * Check whether specified attribute can be used in LN
-     *
-     * @param Mage_Catalog_Model_Resource_Eav_Attribute  $attribute
-     * @return bool
+     * Class constructor
      */
-    protected function _getIsFilterableAttribute($attribute)
+    public function __construct()
     {
-        return $attribute->getIsFilterableInSearch();
+        parent::__construct();
+
+        if ($this->helper('catalin_seo')->isCategoryLinksEnabled()) {
+            /**
+             * Modify template for category filter to disable ajax when url is used.
+             */
+            $this->setTemplate('catalin_seo/catalog/layer/category.phtml');
+        }
     }
 
 }
